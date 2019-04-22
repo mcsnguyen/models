@@ -30,8 +30,14 @@ from utils import label_map_util
 from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
+IMG = '20190416_205811.jpg'
+SAVE_DIR = 'images/detected/'
+IMAGE_DIR = 'images/BCC_Dataset/assembly'
 MODEL_NAME = 'inference_graph'
-IMAGE_NAME = 'test1.jpg'
+IMAGE_NAME = os.path.join(IMAGE_DIR, IMG)
+SAVE_PATH = os.path.join(SAVE_DIR, IMG)
+
+
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -47,7 +53,7 @@ PATH_TO_LABELS = os.path.join(CWD_PATH,'training','labelmap.pbtxt')
 PATH_TO_IMAGE = os.path.join(CWD_PATH,IMAGE_NAME)
 
 # Number of classes the object detector can identify
-NUM_CLASSES = 6
+NUM_CLASSES = 20
 
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
@@ -90,6 +96,7 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 # expand image dimensions to have shape: [1, None, None, 3]
 # i.e. a single-column array, where each item in the column has the pixel RGB value
 image = cv2.imread(PATH_TO_IMAGE)
+image = cv2.resize(image, (512, 512))
 image_expanded = np.expand_dims(image, axis=0)
 
 # Perform the actual detection by running the model with the image as input
@@ -106,9 +113,14 @@ vis_util.visualize_boxes_and_labels_on_image_array(
     np.squeeze(scores),
     category_index,
     use_normalized_coordinates=True,
-    line_thickness=8,
-    min_score_thresh=0.60)
+    line_thickness=3,
+    min_score_thresh=0.60,
+	skip_scores=True)
 
+# Save images to save folder
+cv2.imwrite(SAVE_PATH, image)
+
+'''
 # All the results have been drawn on image. Now display the image.
 cv2.imshow('Object detector', image)
 
@@ -117,3 +129,4 @@ cv2.waitKey(0)
 
 # Clean up
 cv2.destroyAllWindows()
+'''
